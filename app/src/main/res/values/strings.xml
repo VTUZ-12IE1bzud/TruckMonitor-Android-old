@@ -3,4 +3,12 @@
 <resources xmlns:tools="http://schemas.android.com/tools" tools:locale="en">
     <!-- Global -->
     <string name="app_name" translatable="true">TruckMonitor</string>
+    <string name="scan_qr">Scan QR</string>
+    <string name="error_field_filled_correctly">Field filled correctly</string>
+
+    <!-- Auth -->
+    <string name="auth_login_hint">Email</string>
+    <string name="auth_password_hint">Password</string>
+    <string name="auth_sign_in_action">Sign In</string>
+    <string name="auth_scan_qr_action">@string/scan_qr</string>
 </resources>

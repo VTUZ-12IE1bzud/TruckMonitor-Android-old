@@ -25,9 +25,11 @@ class SplashActivity : MvpAppCompatActivity(), SplashView {
 
     override fun navigate2Main() {
         Navigator.navigate2Main(this)
+        finish()
     }
 
     override fun navigate2Auth() {
         Navigator.navigate2Auth(this)
+        finish()
     }
 }

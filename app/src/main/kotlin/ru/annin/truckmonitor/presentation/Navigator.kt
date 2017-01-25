@@ -1,6 +1,9 @@
 package ru.annin.truckmonitor.presentation
 
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
+import ru.annin.truckmonitor.presentation.ui.activity.AuthActivity
 
 /**
  * Объект инкапсулирующий в себя перемещение пользователя по приложению.
@@ -14,8 +17,14 @@ object Navigator {
 
     }
 
-    /** Переход на жкран авторизации. */
+    /** Переход на экран авторизации. */
     fun navigate2Auth(context: Context) {
+        val intent = Intent(context, AuthActivity::class.java)
+        context.startActivity(intent)
+    }
+
+    /** Переход на экран QR сканера. */
+    fun navigate2QrScan(activity: Activity, request: Int) {
 
     }
 }

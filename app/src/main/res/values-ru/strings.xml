@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources xmlns:tools="http://schemas.android.com/tools" tools:locale="ru">
+    <!-- Global -->
+    <string name="scan_qr">Сканировать QR-код</string>
+    <string name="error_field_filled_correctly">Поле заполнено некорректно</string>
+
+    <!-- Auth -->
+    <string name="auth_login_hint">Email</string>
+    <string name="auth_password_hint">Пароль</string>
+    <string name="auth_sign_in_action">Войти</string>
+    <string name="auth_scan_qr_action">@string/scan_qr</string>
+</resources>

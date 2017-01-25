@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources xmlns:tools="http://schemas.android.com/tools" tools:locale="zh">
+    <!-- Global -->
+    <string name="scan_qr">扫描QR</string>
+    <string name="error_field_filled_correctly">字段填写正确</string>
+
+    <!-- Auth -->
+    <string name="auth_login_hint">电子邮件</string>
+    <string name="auth_password_hint">密码</string>
+    <string name="auth_sign_in_action">签到</string>
+    <string name="auth_scan_qr_action">@string/scan_qr</string>
+</resources>
