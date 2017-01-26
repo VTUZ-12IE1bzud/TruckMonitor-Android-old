@@ -5,7 +5,13 @@ import android.util.Patterns
 import com.arellomobile.mvp.InjectViewState
 import com.arellomobile.mvp.MvpPresenter
 import ru.annin.truckmonitor.R
+import ru.annin.truckmonitor.data.network.ApiException
+import ru.annin.truckmonitor.data.repository.RestApiRepository
 import ru.annin.truckmonitor.presentation.ui.view.AuthView
+import rx.android.schedulers.AndroidSchedulers
+import rx.lang.kotlin.addTo
+import rx.schedulers.Schedulers
+import rx.subscriptions.CompositeSubscription
 
 /**
  * Presenter экрана "Авторизация".
@@ -13,12 +19,27 @@ import ru.annin.truckmonitor.presentation.ui.view.AuthView
  * @author Pavel Annin.
  */
 @InjectViewState
-class AuthPresenter : MvpPresenter<AuthView>() {
+class AuthPresenter(val apiRepository: RestApiRepository) : MvpPresenter<AuthView>() {
+
+    // Component's
+    private val rxSubscription: CompositeSubscription = CompositeSubscription()
 
     /** Авторизация. */
     fun onSignIn(login: CharSequence?, password: CharSequence?) {
         if (validateAuthData(login, password)) {
-            viewState.navigate2Main()
+            apiRepository.signIn(login!!.toString(), password!!.toString())
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(
+                            { signIn -> viewState.navigate2Main() },
+                            { error ->
+                                if (error is ApiException && error.code < 500) {
+                                    viewState.error(R.string.error_invalid_login_password)
+                                } else {
+                                    viewState.error(R.string.error_server_not_available)
+                                }
+                            })
+                    .addTo(rxSubscription)
         }
     }
 

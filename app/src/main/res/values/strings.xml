@@ -5,6 +5,8 @@
     <string name="app_name" translatable="true">TruckMonitor</string>
     <string name="scan_qr">Scan QR</string>
     <string name="error_field_filled_correctly">Field filled correctly</string>
+    <string name="error_server_not_available">Server is not available</string>
+    <string name="error_invalid_login_password">Invalid login/password</string>
 
     <!-- Auth -->
     <string name="auth_login_hint">Email</string>

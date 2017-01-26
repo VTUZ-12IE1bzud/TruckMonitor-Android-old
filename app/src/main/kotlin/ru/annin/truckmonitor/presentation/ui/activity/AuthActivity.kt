@@ -1,6 +1,7 @@
 package ru.annin.truckmonitor.presentation.ui.activity
 
 import android.os.Bundle
+import android.support.design.widget.Snackbar
 import android.support.design.widget.TextInputLayout
 import android.view.View
 import android.widget.Button
@@ -10,6 +11,7 @@ import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.PresenterType
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import ru.annin.truckmonitor.R
+import ru.annin.truckmonitor.data.repository.RestApiRepository
 import ru.annin.truckmonitor.presentation.Navigator
 import ru.annin.truckmonitor.presentation.common.BaseViewDelegate
 import ru.annin.truckmonitor.presentation.presenter.AuthPresenter
@@ -32,7 +34,7 @@ class AuthActivity : MvpAppCompatActivity(), AuthView {
     private lateinit var viewDelegate: ViewDelegate
 
     @ProvidePresenter(type = PresenterType.LOCAL)
-    fun providerPresenter(): AuthPresenter = AuthPresenter()
+    fun providerPresenter(): AuthPresenter = AuthPresenter(RestApiRepository)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,6 +60,10 @@ class AuthActivity : MvpAppCompatActivity(), AuthView {
 
     override fun errorPassword(res: Int?) {
         viewDelegate.errorPassword = if (res != null) getString(res) else null
+    }
+
+    override fun error(res: Int) {
+        viewDelegate.error(getString(res))
     }
 
     /**
@@ -95,6 +101,10 @@ class AuthActivity : MvpAppCompatActivity(), AuthView {
         init {
             btnSignIn.setOnClickListener { onSignInClick?.invoke(edtUserLogin.text, edtUserPassword.text) }
             btnScanQr.setOnClickListener { onScanQrClick?.invoke() }
+        }
+
+        fun error(message: CharSequence) {
+            Snackbar.make(vRoot, message, Snackbar.LENGTH_LONG).show()
         }
     }
 }

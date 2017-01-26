@@ -21,4 +21,7 @@ interface AuthView : MvpView {
 
     /** Ошибка в пароле. */
     fun errorPassword(@StringRes res: Int?)
+
+    /** Ошибка. */
+    fun error(@StringRes res: Int)
 }
