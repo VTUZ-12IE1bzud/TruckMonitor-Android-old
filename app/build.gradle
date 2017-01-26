@@ -26,7 +26,9 @@ android {
 
     productFlavors {
         dev {
-            buildConfigField "String", "API_BASE_URL", '"http://192.168.1.2"'
+            buildConfigField "String", "API_BASE_URL", '"http://192.168.1.2:1337"'
+            buildConfigField "String", "KEY_APPLICATION", '"TruckMonitorDev"'
+            buildConfigField "String", "KEY_REST", '"TruckMonitorDev"'
         }
     }
 

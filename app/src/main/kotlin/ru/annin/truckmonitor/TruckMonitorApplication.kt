@@ -2,6 +2,7 @@ package ru.annin.truckmonitor
 
 import android.app.Application
 import android.support.v7.app.AppCompatDelegate
+import ru.annin.truckmonitor.data.repository.RestApiRepository
 import ru.annin.truckmonitor.data.repository.SettingsRepository
 
 /**
@@ -17,5 +18,6 @@ class TruckMonitorApplication : Application() {
 
         // Setup
         SettingsRepository.init(this)
+        RestApiRepository.token = SettingsRepository.userToken
     }
 }
