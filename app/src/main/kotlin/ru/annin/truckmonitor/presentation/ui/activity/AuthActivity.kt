@@ -12,6 +12,7 @@ import com.arellomobile.mvp.presenter.PresenterType
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import ru.annin.truckmonitor.R
 import ru.annin.truckmonitor.data.repository.RestApiRepository
+import ru.annin.truckmonitor.data.repository.SettingsRepository
 import ru.annin.truckmonitor.presentation.Navigator
 import ru.annin.truckmonitor.presentation.common.BaseViewDelegate
 import ru.annin.truckmonitor.presentation.presenter.AuthPresenter
@@ -34,7 +35,7 @@ class AuthActivity : MvpAppCompatActivity(), AuthView {
     private lateinit var viewDelegate: ViewDelegate
 
     @ProvidePresenter(type = PresenterType.LOCAL)
-    fun providerPresenter(): AuthPresenter = AuthPresenter(RestApiRepository)
+    fun providerPresenter(): AuthPresenter = AuthPresenter(RestApiRepository, SettingsRepository)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

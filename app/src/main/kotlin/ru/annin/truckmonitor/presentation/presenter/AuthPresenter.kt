@@ -7,6 +7,7 @@ import com.arellomobile.mvp.MvpPresenter
 import ru.annin.truckmonitor.R
 import ru.annin.truckmonitor.data.network.ApiException
 import ru.annin.truckmonitor.data.repository.RestApiRepository
+import ru.annin.truckmonitor.data.repository.SettingsRepository
 import ru.annin.truckmonitor.presentation.ui.view.AuthView
 import rx.android.schedulers.AndroidSchedulers
 import rx.lang.kotlin.addTo
@@ -19,7 +20,8 @@ import rx.subscriptions.CompositeSubscription
  * @author Pavel Annin.
  */
 @InjectViewState
-class AuthPresenter(val apiRepository: RestApiRepository) : MvpPresenter<AuthView>() {
+class AuthPresenter(val apiRepository: RestApiRepository,
+                    val settingsRepository: SettingsRepository) : MvpPresenter<AuthView>() {
 
     // Component's
     private val rxSubscription: CompositeSubscription = CompositeSubscription()
@@ -31,9 +33,18 @@ class AuthPresenter(val apiRepository: RestApiRepository) : MvpPresenter<AuthVie
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(
-                            { signIn -> viewState.navigate2Main() },
+                            { signIn ->
+                                // Кеширование токена
+                                signIn.run {
+                                    // TODO: Разкомментировать после добавления кнопки выйти
+//                                    settingsRepository.userToken = token
+                                    apiRepository.token = token
+                                }
+                                viewState.navigate2Main()
+
+                            },
                             { error ->
-                                if (error is ApiException && error.code < 500) {
+                                if (error is ApiException && (error.code < 500 || !error.isNetworkException)) {
                                     viewState.error(R.string.error_invalid_login_password)
                                 } else {
                                     viewState.error(R.string.error_server_not_available)
