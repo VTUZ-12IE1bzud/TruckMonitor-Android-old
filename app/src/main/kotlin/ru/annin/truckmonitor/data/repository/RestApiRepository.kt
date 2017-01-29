@@ -29,7 +29,5 @@ object RestApiRepository {
      * @param password Пароль пользователя.
      */
     fun signIn(userName: String,
-               password: String): Observable<SignInResponse> {
-        return service.signIn(userName, password)
-    }
+               password: String): Observable<SignInResponse> = service.signIn(userName, password)
 }
