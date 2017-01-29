@@ -1,8 +1,6 @@
 package ru.annin.truckmonitor.data.network
 
-import okhttp3.Interceptor
 import okhttp3.OkHttpClient
-import okhttp3.Request
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.jackson.JacksonConverterFactory
@@ -14,7 +12,6 @@ import java.util.concurrent.TimeUnit
  * Сервис реализации REST API.
  * Объект конфигурирует:
  *  - Базовый URL;
- *  - Header;
  *  - Логи;
  *  - Тайминги.
  *
@@ -26,9 +23,8 @@ object TruckMonitorApiService {
 
     // Configuration's
     private const val SERVER_URL = BuildConfig.API_BASE_URL
-    private const val HEADER_APPLICATION = "X-Parse-Application-Id"
-    private const val HEADER_REST_KEY = "X-Parse-REST-API-Key"
     private val LOG_ENABLE = BuildConfig.DEBUG
+    const val HEADER_AUTH ="X-Auth-Token"
 
     // Timings
     private const val TIMEOUT_SEC = 60L
@@ -59,22 +55,9 @@ object TruckMonitorApiService {
                 .connectTimeout(TIMEOUT_SEC, TimeUnit.SECONDS)
                 .readTimeout(TIMEOUT_READ_SEC, TimeUnit.SECONDS)
                 .writeTimeout(TIMEOUT_WRITE_SEC, TimeUnit.SECONDS)
-                .addInterceptor(configHeaderInterceptor())
                 .addInterceptor(configLoggingInterceptor())
                 .build()
 
-    }
-
-    /** Конфигурация Header. */
-    private fun configHeaderInterceptor(): Interceptor {
-        return Interceptor {
-            val originalRequest: Request = it.request()
-            val newRequest: Request = originalRequest.newBuilder()
-                    .addHeader(HEADER_APPLICATION, BuildConfig.KEY_APPLICATION)
-                    .addHeader(HEADER_REST_KEY, BuildConfig.KEY_REST)
-                    .build()
-            return@Interceptor it.proceed(newRequest)
-        }
     }
 
     /** Конфигурация логов. */

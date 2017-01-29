@@ -10,6 +10,7 @@ import org.junit.BeforeClass
 import org.junit.Test
 import org.junit.runner.RunWith
 import ru.annin.truckmonitor.data.repository.RestApiRepository
+import ru.annin.truckmonitor.domain.model.MeResponse
 import ru.annin.truckmonitor.domain.model.SignInResponse
 import rx.observers.TestSubscriber
 
@@ -45,7 +46,7 @@ class RestApiRepositoryTest : TestCase() {
     fun signIn() {
         val subscriber: TestSubscriber<SignInResponse> = TestSubscriber()
 
-        val userName = "ivanov@truckmonitor.ru"
+        val userName = "ivanov@truck.ru"
         val password = "qwerty12345"
 
         repository.signIn(userName, password).subscribe(subscriber)
@@ -58,5 +59,23 @@ class RestApiRepositoryTest : TestCase() {
         // Data
         val data = subscriber.onNextEvents[0]
         assertThat("[SignIn]", data, notNullValue())
+    }
+
+    @Test
+    fun getMe() {
+        val subscriber: TestSubscriber<MeResponse> = TestSubscriber()
+
+        val token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaXNzIjoiVHJ1Y2tNb25pdG9yIn0.Rbkie--WwbRUmFQk13AXVf-my9tvi0e6YR057Sutpls"
+
+        repository.getMe(token).subscribe(subscriber)
+
+        // Request
+        subscriber.assertNoErrors()
+        subscriber.assertCompleted()
+        assertTrue(subscriber.onNextEvents.isNotEmpty())
+
+        // Data
+        val data = subscriber.onNextEvents[0]
+        assertThat("[Me]", data, notNullValue())
     }
 }
