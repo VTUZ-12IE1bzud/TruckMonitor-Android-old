@@ -24,6 +24,7 @@ object TruckMonitorApiService {
     // Configuration's
     private const val SERVER_URL = BuildConfig.API_BASE_URL
     private val LOG_ENABLE = BuildConfig.DEBUG
+    const val HEADER_AUTH ="X-Auth-Token"
 
     // Timings
     private const val TIMEOUT_SEC = 60L
