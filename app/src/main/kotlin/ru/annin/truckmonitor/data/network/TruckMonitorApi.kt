@@ -18,7 +18,7 @@ interface TruckMonitorApi {
      * @param userName Имя пользователя.
      * @param password Пароль пользователя.
      */
-    @GET("/parse/truckmonitor/login")
-    fun signIn(@Query("username") userName: String,
+    @GET("/api/v1/login")
+    fun signIn(@Query("email") userName: String,
                @Query("password") password: String): Observable<SignInResponse>
 }

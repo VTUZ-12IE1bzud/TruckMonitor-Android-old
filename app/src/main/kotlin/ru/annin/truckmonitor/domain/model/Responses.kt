@@ -16,4 +16,4 @@ import java.io.Serializable
  * @param token Токен пользователя.
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-data class SignInResponse(@JsonProperty("sessionToken", required = true) val token: String): Serializable
+data class SignInResponse(@JsonProperty("token", required = true) val token: String): Serializable

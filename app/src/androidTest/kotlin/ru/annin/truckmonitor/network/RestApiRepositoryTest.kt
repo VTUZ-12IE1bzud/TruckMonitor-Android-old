@@ -45,7 +45,7 @@ class RestApiRepositoryTest : TestCase() {
     fun signIn() {
         val subscriber: TestSubscriber<SignInResponse> = TestSubscriber()
 
-        val userName = "ivanov@truckmonitor.ru"
+        val userName = "ivanov@truck.ru"
         val password = "qwerty12345"
 
         repository.signIn(userName, password).subscribe(subscriber)
