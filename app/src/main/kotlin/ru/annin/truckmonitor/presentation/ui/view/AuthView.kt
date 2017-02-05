@@ -2,6 +2,7 @@ package ru.annin.truckmonitor.presentation.ui.view
 
 import android.support.annotation.StringRes
 import com.arellomobile.mvp.MvpView
+import ru.annin.truckmonitor.domain.model.ErrorResponse
 
 /**
  * Представление экрана "Авторизация".
@@ -24,4 +25,10 @@ interface AuthView : MvpView {
 
     /** Ошибка. */
     fun error(@StringRes res: Int)
+
+    /** Ошиюка. */
+    fun error(err: ErrorResponse)
+
+    /** Состояние загрузки. */
+    fun toggleLoading(isLoading: Boolean)
 }

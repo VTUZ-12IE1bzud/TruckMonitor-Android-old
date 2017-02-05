@@ -8,6 +8,7 @@ import ru.annin.truckmonitor.R
 import ru.annin.truckmonitor.data.network.ApiException
 import ru.annin.truckmonitor.data.repository.RestApiRepository
 import ru.annin.truckmonitor.data.repository.SettingsRepository
+import ru.annin.truckmonitor.domain.value.Role
 import ru.annin.truckmonitor.presentation.ui.view.AuthView
 import rx.android.schedulers.AndroidSchedulers
 import rx.lang.kotlin.addTo
@@ -26,31 +27,15 @@ class AuthPresenter(val apiRepository: RestApiRepository,
     // Component's
     private val rxSubscription: CompositeSubscription = CompositeSubscription()
 
+    override fun onDestroy() {
+        super.onDestroy()
+        rxSubscription.unsubscribe()
+    }
+
     /** Авторизация. */
     fun onSignIn(login: CharSequence?, password: CharSequence?) {
         if (validateAuthData(login, password)) {
-            apiRepository.signIn(login!!.toString(), password!!.toString())
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(
-                            { signIn ->
-                                // Кеширование токена
-                                signIn.run {
-                                    // TODO: Разкомментировать после добавления кнопки выйти
-//                                    settingsRepository.userToken = token
-                                    apiRepository.token = token
-                                }
-                                viewState.navigate2Main()
-
-                            },
-                            { error ->
-                                if (error is ApiException && (error.code < 500 || !error.isNetworkException)) {
-                                    viewState.error(R.string.error_invalid_login_password)
-                                } else {
-                                    viewState.error(R.string.error_server_not_available)
-                                }
-                            })
-                    .addTo(rxSubscription)
+            signIn(login.toString(), password.toString())
         }
     }
 
@@ -77,5 +62,55 @@ class AuthPresenter(val apiRepository: RestApiRepository,
             }
         }
         return validation
+    }
+
+    private fun signIn(login: String, password: String) {
+        viewState.toggleLoading(true)
+        apiRepository.signIn(login!!.toString(), password!!.toString())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        { signIn -> getMe(signIn.token) },
+                        { err ->
+                            viewState.toggleLoading(false)
+                            if (err is ApiException && err.error != null) {
+                                viewState.error(err.error)
+                            } else {
+                                viewState.error(R.string.error_server_not_available)
+                            }
+                        })
+                .addTo(rxSubscription)
+    }
+
+    private fun getMe(token: String) {
+        apiRepository.getMe(token)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        { account ->
+                            viewState.toggleLoading(false)
+                            account.run {
+                                // Валидация пользователя
+                                if (role.role == Role.DRIVER) {
+                                    // Кеширование токена
+                                    settingsRepository.userToken = token
+                                    apiRepository.token = token
+
+                                    viewState.navigate2Main()
+                                } else {
+                                    // Пользователь не водитель, сообщеине о запрете входа.
+                                    viewState.error(R.string.auth_error_role_incorrect)
+                                }
+                            }
+                        },
+                        { err ->
+                            viewState.toggleLoading(false)
+                            if (err is ApiException && err.error != null) {
+                                viewState.error(err.error)
+                            } else {
+                                viewState.error(R.string.error_server_not_available)
+                            }
+                        })
+                .addTo(rxSubscription)
     }
 }

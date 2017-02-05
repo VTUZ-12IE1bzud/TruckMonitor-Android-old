@@ -1,5 +1,6 @@
 package ru.annin.truckmonitor.presentation.ui.activity
 
+import android.app.ProgressDialog
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.design.widget.TextInputLayout
@@ -13,6 +14,7 @@ import com.arellomobile.mvp.presenter.ProvidePresenter
 import ru.annin.truckmonitor.R
 import ru.annin.truckmonitor.data.repository.RestApiRepository
 import ru.annin.truckmonitor.data.repository.SettingsRepository
+import ru.annin.truckmonitor.domain.model.ErrorResponse
 import ru.annin.truckmonitor.presentation.Navigator
 import ru.annin.truckmonitor.presentation.common.BaseViewDelegate
 import ru.annin.truckmonitor.presentation.presenter.AuthPresenter
@@ -33,6 +35,9 @@ class AuthActivity : MvpAppCompatActivity(), AuthView {
     @InjectPresenter(type = PresenterType.LOCAL)
     lateinit var presenter: AuthPresenter
     private lateinit var viewDelegate: ViewDelegate
+    private val progress: ProgressDialog by lazy { ProgressDialog(this).apply {
+        setMessage(getString(R.string.auth_loading))
+    }}
 
     @ProvidePresenter(type = PresenterType.LOCAL)
     fun providerPresenter(): AuthPresenter = AuthPresenter(RestApiRepository, SettingsRepository)
@@ -51,9 +56,7 @@ class AuthActivity : MvpAppCompatActivity(), AuthView {
         finish()
     }
 
-    override fun navigate2QrScan() {
-        Navigator.navigate2QrScan(this, REQUEST_QR_SCAN)
-    }
+    override fun navigate2QrScan() = Navigator.navigate2QrScan(this, REQUEST_QR_SCAN)
 
     override fun errorLogin(res: Int?) {
         viewDelegate.errorLogin = if (res != null) getString(res) else null
@@ -63,8 +66,17 @@ class AuthActivity : MvpAppCompatActivity(), AuthView {
         viewDelegate.errorPassword = if (res != null) getString(res) else null
     }
 
-    override fun error(res: Int) {
-        viewDelegate.error(getString(res))
+    override fun error(res: Int) = viewDelegate.error(getString(res))
+
+
+    override fun error(err: ErrorResponse) = viewDelegate.error(err.message)
+
+    override fun toggleLoading(isLoading: Boolean) {
+        if (isLoading && !progress.isShowing) {
+            progress.show()
+        } else if (!isLoading && progress.isShowing) {
+            progress.hide()
+        }
     }
 
     /**
@@ -104,8 +116,6 @@ class AuthActivity : MvpAppCompatActivity(), AuthView {
             btnScanQr.setOnClickListener { onScanQrClick?.invoke() }
         }
 
-        fun error(message: CharSequence) {
-            Snackbar.make(vRoot, message, Snackbar.LENGTH_LONG).show()
-        }
+        fun error(message: CharSequence) = Snackbar.make(vRoot, message, Snackbar.LENGTH_LONG).show()
     }
 }
