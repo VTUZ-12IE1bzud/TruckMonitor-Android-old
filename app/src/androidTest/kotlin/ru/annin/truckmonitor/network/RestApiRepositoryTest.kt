@@ -10,7 +10,7 @@ import org.junit.BeforeClass
 import org.junit.Test
 import org.junit.runner.RunWith
 import ru.annin.truckmonitor.data.repository.RestApiRepository
-import ru.annin.truckmonitor.domain.model.MeResponse
+import ru.annin.truckmonitor.domain.model.AccountResponse
 import ru.annin.truckmonitor.domain.model.SignInResponse
 import rx.observers.TestSubscriber
 
@@ -63,9 +63,9 @@ class RestApiRepositoryTest : TestCase() {
 
     @Test
     fun getMe() {
-        val subscriber: TestSubscriber<MeResponse> = TestSubscriber()
+        val subscriber: TestSubscriber<AccountResponse> = TestSubscriber()
 
-        val token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaXNzIjoiVHJ1Y2tNb25pdG9yIn0.Rbkie--WwbRUmFQk13AXVf-my9tvi0e6YR057Sutpls"
+        val token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInVzZXJFbWFpbCI6Iml2YW5vdkB0cnVjay5ydSIsImlzcyI6IlRydWNrTW9uaXRvciJ9.oi6hmG_gv5F2W0q4xi24uAz64dIUfp9Cg6rj3wTVJZU"
 
         repository.getMe(token).subscribe(subscriber)
 

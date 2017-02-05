@@ -3,7 +3,7 @@ package ru.annin.truckmonitor.data.repository
 import ru.annin.truckmonitor.data.network.TruckMonitorApi
 import ru.annin.truckmonitor.data.network.TruckMonitorApiService
 import ru.annin.truckmonitor.data.repository.RestApiRepository.token
-import ru.annin.truckmonitor.domain.model.MeResponse
+import ru.annin.truckmonitor.domain.model.AccountResponse
 import ru.annin.truckmonitor.domain.model.SignInResponse
 import rx.Observable
 
@@ -34,9 +34,7 @@ object RestApiRepository {
 
     /**
      * Информация о пользователе.
-     *
-     * @param userName Имя пользователя.
-     * @param password Пароль пользователя.
-     */
-    fun getMe(token: String? = this.token): Observable<MeResponse> = service.getMe(token)
+     * @param token Токен поьзователя.
+     **/
+    fun getMe(token: String? = this.token): Observable<AccountResponse> = service.getMe(token)
 }

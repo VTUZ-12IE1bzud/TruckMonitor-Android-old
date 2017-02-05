@@ -5,6 +5,7 @@ import retrofit2.CallAdapter
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava.HttpException
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory
+import ru.annin.truckmonitor.domain.model.ErrorResponse
 import rx.Observable
 import java.io.IOException
 import java.lang.reflect.Type
@@ -30,7 +31,9 @@ class RxErrorHandlingAdapterFactory(
 
         fun asRetrofitException(throwable: Throwable): ApiException {
             if (throwable is HttpException) {
-                return ApiException(code = throwable.response().code(), message = throwable.message)
+                val model = retrofit.responseBodyConverter<ErrorResponse>(ErrorResponse::class.java, arrayOfNulls<Annotation>(0))
+                        .convert(throwable.response().errorBody())
+                return ApiException(code = throwable.response().code(), error = model, message = throwable.message)
             } else if (throwable is IOException) {
                 return ApiException(isNetworkException = true, message = throwable.message)
             }
