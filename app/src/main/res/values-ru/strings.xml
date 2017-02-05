@@ -5,6 +5,7 @@
     <string name="scan_qr">Сканировать QR-код</string>
     <string name="error_field_filled_correctly">Поле заполнено некорректно</string>
     <string name="error_server_not_available">Сервер недоступен</string>
+    <string name="error_qr_incorrect">QR код поврежден</string>
 
     <!-- Auth -->
     <string name="auth_login_hint">Email</string>

@@ -5,6 +5,7 @@
     <string name="scan_qr">扫描QR</string>
     <string name="error_field_filled_correctly">字段填写正确</string>
     <string name="error_server_not_available">服务器不可用</string>
+    <string name="error_qr_incorrect">"二维码损坏"</string>
 
     <!-- Auth -->
     <string name="auth_login_hint">电子邮件</string>

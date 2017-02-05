@@ -8,6 +8,8 @@ import ru.annin.truckmonitor.R
 import ru.annin.truckmonitor.data.network.ApiException
 import ru.annin.truckmonitor.data.repository.RestApiRepository
 import ru.annin.truckmonitor.data.repository.SettingsRepository
+import ru.annin.truckmonitor.domain.interactor.QrDecoder
+import ru.annin.truckmonitor.domain.model.SignInQr
 import ru.annin.truckmonitor.domain.value.Role
 import ru.annin.truckmonitor.presentation.ui.view.AuthView
 import rx.android.schedulers.AndroidSchedulers
@@ -22,7 +24,8 @@ import rx.subscriptions.CompositeSubscription
  */
 @InjectViewState
 class AuthPresenter(val apiRepository: RestApiRepository,
-                    val settingsRepository: SettingsRepository) : MvpPresenter<AuthView>() {
+                    val settingsRepository: SettingsRepository,
+                    val qrDecoder: QrDecoder) : MvpPresenter<AuthView>() {
 
     // Component's
     private val rxSubscription: CompositeSubscription = CompositeSubscription()
@@ -37,6 +40,24 @@ class AuthPresenter(val apiRepository: RestApiRepository,
         if (validateAuthData(login, password)) {
             signIn(login.toString(), password.toString())
         }
+    }
+
+    /** Авторизация через QR код. */
+    fun onSignInWithQr(qr: String) {
+        viewState.toggleLoading(true)
+        qrDecoder.toModel<SignInQr>(qr, SignInQr::class.java)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        { qr -> signIn(qr.email, qr.password) },
+                        { error ->
+                            viewState.run {
+                                toggleLoading(false)
+                                error(R.string.error_qr_incorrect)
+                            }
+                        })
+                .addTo(rxSubscription)
+
     }
 
     /** Открыть QR сканер. */
@@ -66,7 +87,7 @@ class AuthPresenter(val apiRepository: RestApiRepository,
 
     private fun signIn(login: String, password: String) {
         viewState.toggleLoading(true)
-        apiRepository.signIn(login!!.toString(), password!!.toString())
+        apiRepository.signIn(login, password)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(

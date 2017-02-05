@@ -1,6 +1,8 @@
 package ru.annin.truckmonitor.presentation.ui.activity
 
+import android.app.Activity
 import android.app.ProgressDialog
+import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.design.widget.TextInputLayout
@@ -14,6 +16,7 @@ import com.arellomobile.mvp.presenter.ProvidePresenter
 import ru.annin.truckmonitor.R
 import ru.annin.truckmonitor.data.repository.RestApiRepository
 import ru.annin.truckmonitor.data.repository.SettingsRepository
+import ru.annin.truckmonitor.domain.interactor.QrDecoder
 import ru.annin.truckmonitor.domain.model.ErrorResponse
 import ru.annin.truckmonitor.presentation.Navigator
 import ru.annin.truckmonitor.presentation.common.BaseViewDelegate
@@ -35,12 +38,14 @@ class AuthActivity : MvpAppCompatActivity(), AuthView {
     @InjectPresenter(type = PresenterType.LOCAL)
     lateinit var presenter: AuthPresenter
     private lateinit var viewDelegate: ViewDelegate
-    private val progress: ProgressDialog by lazy { ProgressDialog(this).apply {
-        setMessage(getString(R.string.auth_loading))
-    }}
+    private val progress: ProgressDialog by lazy {
+        ProgressDialog(this).apply {
+            setMessage(getString(R.string.auth_loading))
+        }
+    }
 
     @ProvidePresenter(type = PresenterType.LOCAL)
-    fun providerPresenter(): AuthPresenter = AuthPresenter(RestApiRepository, SettingsRepository)
+    fun providerPresenter(): AuthPresenter = AuthPresenter(RestApiRepository, SettingsRepository, QrDecoder())
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,6 +53,17 @@ class AuthActivity : MvpAppCompatActivity(), AuthView {
         viewDelegate = ViewDelegate(findViewById(R.id.root)).apply {
             onSignInClick = { login, password -> presenter.onSignIn(login, password) }
             onScanQrClick = { presenter.onQrScanOpen() }
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (requestCode == REQUEST_QR_SCAN && resultCode == Activity.RESULT_OK) {
+            data?.run {
+                val qrData = extras.getString(QrScannerActivity.EXTRA_QR_DATA)
+                presenter.onSignInWithQr(qrData)
+            }
+        } else {
+            super.onActivityResult(requestCode, resultCode, data)
         }
     }
 

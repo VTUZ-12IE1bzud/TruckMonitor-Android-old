@@ -2,7 +2,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="ru.annin.truckmonitor">
 
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.CAMERA" />
 
     <application
         android:name=".TruckMonitorApplication"
@@ -29,6 +30,12 @@
             android:name=".presentation.ui.activity.AuthActivity"
             android:theme="@style/TruckMonitorTheme.Auth"
             android:windowSoftInputMode="adjustResize|stateVisible" />
+
+        <activity
+            android:name=".presentation.ui.activity.QrScannerActivity"
+            android:launchMode="singleInstance"
+            android:theme="@style/TruckMonitorTheme.QrScan"
+            android:windowSoftInputMode="adjustPan|stateAlwaysHidden" />
 
     </application>
 
